@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Exception;
 
-class LogicException extends \LogicException implements PagerfantaException {}
+class LogicException extends \LogicException implements PagerfantaException
+{
+}

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Twig\View;
 
@@ -17,7 +19,8 @@ final class TwigView extends View
     public function __construct(
         private readonly Environment $twig,
         private readonly ?string $defaultTemplate = null,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {

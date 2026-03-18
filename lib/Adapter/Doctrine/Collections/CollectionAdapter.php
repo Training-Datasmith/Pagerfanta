@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Doctrine\Collections;
 
@@ -20,7 +22,8 @@ class CollectionAdapter implements AdapterInterface
      */
     public function __construct(
         private readonly ReadableCollection $collection,
-    ) {}
+    ) {
+    }
 
     /**
      * @return int<0, max>

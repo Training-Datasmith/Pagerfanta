@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Twig\Tests\View;
 
@@ -445,19 +447,20 @@ final class TwigViewIntegrationTest extends TestCase
 
     private function createRouteGeneratorFactory(): RouteGeneratorFactoryInterface
     {
-        return new class implements RouteGeneratorFactoryInterface {
+        return new class () implements RouteGeneratorFactoryInterface {
             /**
              * @param array<string, mixed> $options
              */
             public function create(array $options = []): RouteGeneratorInterface
             {
-                return new class($options) implements RouteGeneratorInterface {
+                return new class ($options) implements RouteGeneratorInterface {
                     /**
                      * @param array<string, mixed> $options
                      */
                     public function __construct(
                         private readonly array $options,
-                    ) {}
+                    ) {
+                    }
 
                     public function __invoke(int $page): string
                     {
@@ -476,10 +479,11 @@ final class TwigViewIntegrationTest extends TestCase
 
     private function createRuntimeLoader(): RuntimeLoaderInterface
     {
-        return new class($this) implements RuntimeLoaderInterface {
+        return new class ($this) implements RuntimeLoaderInterface {
             public function __construct(
                 private readonly TwigViewIntegrationTest $testCase,
-            ) {}
+            ) {
+            }
 
             /**
              * @param string $class

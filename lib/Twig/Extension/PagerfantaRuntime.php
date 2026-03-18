@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Twig\Extension;
 
@@ -15,7 +17,8 @@ final class PagerfantaRuntime implements RuntimeExtensionInterface
         private readonly string $defaultView,
         private readonly ViewFactoryInterface $viewFactory,
         private readonly RouteGeneratorFactoryInterface $routeGeneratorFactory,
-    ) {}
+    ) {
+    }
 
     /**
      * @param PagerfantaInterface<mixed>       $pagerfanta

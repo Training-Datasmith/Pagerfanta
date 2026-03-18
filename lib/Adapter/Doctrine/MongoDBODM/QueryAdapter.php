@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Doctrine\MongoDBODM;
 
@@ -16,7 +18,8 @@ class QueryAdapter implements AdapterInterface
 {
     public function __construct(
         private readonly Builder $queryBuilder,
-    ) {}
+    ) {
+    }
 
     /**
      * @return int<0, max>

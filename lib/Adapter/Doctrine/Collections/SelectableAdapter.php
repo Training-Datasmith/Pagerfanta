@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Doctrine\Collections;
 
@@ -22,7 +24,8 @@ class SelectableAdapter implements AdapterInterface
     public function __construct(
         private readonly Selectable $selectable,
         private readonly Criteria $criteria,
-    ) {}
+    ) {
+    }
 
     /**
      * @return int<0, max>

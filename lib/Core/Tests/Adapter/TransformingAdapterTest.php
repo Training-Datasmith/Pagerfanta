@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Tests\Adapter;
 
@@ -41,7 +43,7 @@ final class TransformingAdapterTest extends TestCase
     {
         $this->adapter = new TransformingAdapter(
             new ArrayAdapter($this->array),
-            new class {
+            new class () {
                 public function __invoke(int $item, int $key): string
                 {
                     return \sprintf('%s', $item - 100);

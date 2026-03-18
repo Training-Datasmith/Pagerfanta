@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta;
 
@@ -51,7 +53,8 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
      */
     public function __construct(
         private readonly AdapterInterface $adapter,
-    ) {}
+    ) {
+    }
 
     /**
      * @param AdapterInterface<T> $adapter

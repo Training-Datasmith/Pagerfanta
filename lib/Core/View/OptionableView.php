@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\View;
 
@@ -16,7 +18,8 @@ class OptionableView implements ViewInterface
     public function __construct(
         private readonly ViewInterface $view,
         private readonly array $defaultOptions,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $options

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Adapter;
 
@@ -16,7 +18,8 @@ class ArrayAdapter implements AdapterInterface
      */
     public function __construct(
         private readonly array $array,
-    ) {}
+    ) {
+    }
 
     /**
      * @return int<0, max>

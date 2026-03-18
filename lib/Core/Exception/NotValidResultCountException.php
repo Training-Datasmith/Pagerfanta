@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Pagerfanta\Exception;
 
-class NotValidResultCountException extends RuntimeException {}
+class NotValidResultCountException extends RuntimeException
+{
+}
