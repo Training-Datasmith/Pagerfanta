@@ -106,13 +106,16 @@ class SemanticUiTemplate extends Template
 
     private function link(string $class, string $href, int|string $text, ?string $rel = null): string
     {
-        $rel = $rel ? \sprintf(' rel="%s"', $rel) : '';
+        $rel = $rel ? \sprintf(' rel="%s"', htmlspecialchars($rel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')) : '';
+        $combinedClass = htmlspecialchars($this->option('css_item_class').' '.$class, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
 
-        return \sprintf('<a class="%s %s" href="%s"%s>%s</a>', $this->option('css_item_class'), $class, $href, $rel, $text);
+        return \sprintf('<a class="%s" href="%s"%s>%s</a>', $combinedClass, $href, $rel, $text);
     }
 
     private function div(string $class, int|string $text): string
     {
-        return \sprintf('<div class="%s %s">%s</div>', $this->option('css_item_class'), $class, $text);
+        $combinedClass = htmlspecialchars($this->option('css_item_class').' '.$class, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
+
+        return \sprintf('<div class="%s">%s</div>', $combinedClass, $text);
     }
 }

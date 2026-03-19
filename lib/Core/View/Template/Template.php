@@ -47,13 +47,13 @@ abstract class Template implements TemplateInterface
     }
 
     /**
-     * Generate the route (URL) for the given page.
+     * Generate the route (URL) for the given page, HTML-encoded for safe use in href attributes.
      */
     protected function generateRoute(int $page): string
     {
         $generator = $this->getRouteGenerator();
 
-        return $generator($page);
+        return htmlspecialchars($generator($page), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8');
     }
 
     /**

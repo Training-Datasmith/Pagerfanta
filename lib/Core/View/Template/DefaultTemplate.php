@@ -54,12 +54,12 @@ class DefaultTemplate extends Template
         $href = $this->generateRoute($page);
 
         $replace = [
-            trim($this->option('css_item_class').' '.$class),
+            htmlspecialchars(trim($this->option('css_item_class').' '.$class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'),
             $href,
             $text,
         ];
 
-        $replace[] = $rel ? \sprintf(' rel="%s"', $rel) : '';
+        $replace[] = $rel ? \sprintf(' rel="%s"', htmlspecialchars($rel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')) : '';
 
         return str_replace(['%class%', '%href%', '%text%', '%rel%'], $replace, $this->option('page_template'));
     }
@@ -150,6 +150,10 @@ class DefaultTemplate extends Template
 
     private function generateSpan(string $class, int|string $page): string
     {
-        return str_replace(['%class%', '%text%'], [$class, (string) $page], $this->option('span_template'));
+        return str_replace(
+            ['%class%', '%text%'],
+            [htmlspecialchars($class, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'), (string) $page],
+            $this->option('span_template')
+        );
     }
 }

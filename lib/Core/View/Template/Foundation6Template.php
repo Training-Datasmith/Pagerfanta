@@ -108,7 +108,7 @@ class Foundation6Template extends Template
 
     protected function li(string $class, int|string $text): string
     {
-        $liClass = \sprintf(' class="%s"', trim($this->option('css_item_class').' '.$class));
+        $liClass = \sprintf(' class="%s"', htmlspecialchars(trim($this->option('css_item_class').' '.$class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
 
         return \sprintf('<li%s>%s</li>', $liClass, $text);
     }
@@ -116,8 +116,8 @@ class Foundation6Template extends Template
     protected function linkLi(string $class, string $href, int|string $text, ?string $rel = null): string
     {
         $class = trim($this->option('css_item_class').' '.$class);
-        $liClass = '' === $class ? '' : \sprintf(' class="%s"', $class);
-        $itemRel = $rel ? \sprintf(' rel="%s"', $rel) : '';
+        $liClass = '' === $class ? '' : \sprintf(' class="%s"', htmlspecialchars($class, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
+        $itemRel = $rel ? \sprintf(' rel="%s"', htmlspecialchars($rel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')) : '';
 
         return \sprintf('<li%s><a href="%s"%s>%s</a></li>', $liClass, $href, $itemRel, $text);
     }
