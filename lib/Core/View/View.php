@@ -1,118 +1,96 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View;
 
-use Pagerfanta\PagerfantaInterface;
-
-abstract class View implements ViewInterface
+use Pagerfanta\Pagerfanta_Interface;
+abstract class View implements View_Interface
 {
     /**
      * @var PagerfantaInterface<mixed>
      */
-    protected PagerfantaInterface $pagerfanta;
-
+    protected Pagerfanta_Interface $pagerfanta;
     /**
      * @var positive-int|null
      */
-    protected ?int $currentPage = null;
-
+    protected ?int $current_page = null;
     /**
      * @var positive-int|null
      */
-    protected ?int $nbPages = null;
+    protected ?int $nb_pages = null;
     protected ?int $proximity = null;
-
     /**
      * @var positive-int|null
      */
-    protected ?int $startPage = null;
-
+    protected ?int $start_page = null;
     /**
      * @var positive-int|null
      */
-    protected ?int $endPage = null;
-
+    protected ?int $end_page = null;
     /**
      * @param PagerfantaInterface<mixed> $pagerfanta
      */
-    protected function initializePagerfanta(PagerfantaInterface $pagerfanta): void
+    protected function initialize_pagerfanta(Pagerfanta_Interface $pagerfanta): void
     {
         $this->pagerfanta = $pagerfanta;
-
-        $this->currentPage = $pagerfanta->getCurrentPage();
-        $this->nbPages = $pagerfanta->getNbPages();
+        $this->current_page = $pagerfanta->get_current_page();
+        $this->nb_pages = $pagerfanta->get_nb_pages();
     }
-
     /**
      * @param array<string, mixed> $options
      */
-    protected function initializeOptions(array $options): void
+    protected function initialize_options(array $options): void
     {
-        $this->proximity = isset($options['proximity']) ? (int) $options['proximity'] : $this->getDefaultProximity();
+        $this->proximity = isset($options['proximity']) ? (int) $options['proximity'] : $this->get_default_proximity();
     }
-
-    protected function getDefaultProximity(): int
+    protected function get_default_proximity(): int
     {
         return 2;
     }
-
-    protected function calculateStartAndEndPage(): void
+    protected function calculate_start_and_end_page(): void
     {
-        \assert(null !== $this->currentPage);
+        \assert(null !== $this->current_page);
         \assert(null !== $this->proximity);
-
-        $startPage = $this->currentPage - $this->proximity;
-        $endPage = $this->currentPage + $this->proximity;
-
-        if ($this->startPageUnderflow($startPage)) {
-            $endPage = $this->calculateEndPageForStartPageUnderflow($startPage, $endPage);
-            $startPage = 1;
+        $start_page = $this->current_page - $this->proximity;
+        $end_page = $this->current_page + $this->proximity;
+        if ($this->start_page_underflow($start_page)) {
+            $end_page = $this->calculate_end_page_for_start_page_underflow($start_page, $end_page);
+            $start_page = 1;
         }
-
-        if ($this->endPageOverflow($endPage)) {
-            $startPage = $this->calculateStartPageForEndPageOverflow($startPage, $endPage);
-            $endPage = $this->nbPages;
+        if ($this->end_page_overflow($end_page)) {
+            $start_page = $this->calculate_start_page_for_end_page_overflow($start_page, $end_page);
+            $end_page = $this->nb_pages;
         }
-
-        \assert($startPage >= 1);
-        \assert($endPage >= 1);
-
-        $this->startPage = $startPage;
-        $this->endPage = $endPage;
+        \assert($start_page >= 1);
+        \assert($end_page >= 1);
+        $this->start_page = $start_page;
+        $this->end_page = $end_page;
     }
-
-    protected function startPageUnderflow(int $startPage): bool
+    protected function start_page_underflow(int $start_page): bool
     {
-        return $startPage < 1;
+        return $start_page < 1;
     }
-
-    protected function endPageOverflow(int $endPage): bool
+    protected function end_page_overflow(int $end_page): bool
     {
-        return $endPage > $this->nbPages;
+        return $end_page > $this->nb_pages;
     }
-
     /**
      * @return positive-int
      */
-    protected function calculateEndPageForStartPageUnderflow(int $startPage, int $endPage): int
+    protected function calculate_end_page_for_start_page_underflow(int $start_page, int $end_page): int
     {
-        \assert(null !== $this->nbPages);
-
-        return min($endPage + (1 - $startPage), $this->nbPages);
+        \assert(null !== $this->nb_pages);
+        return min($end_page + (1 - $start_page), $this->nb_pages);
     }
-
     /**
      * @return positive-int
      */
-    protected function calculateStartPageForEndPageOverflow(int $startPage, int $endPage): int
+    protected function calculate_start_page_for_end_page_overflow(int $start_page, int $end_page): int
     {
-        return max($startPage - ($endPage - $this->nbPages), 1);
+        return max($start_page - ($end_page - $this->nb_pages), 1);
     }
-
-    protected function toLast(int $n): int
+    protected function to_last(int $n): int
     {
-        return $this->pagerfanta->getNbPages() - ($n - 1);
+        return $this->pagerfanta->get_nb_pages() - ($n - 1);
     }
 }

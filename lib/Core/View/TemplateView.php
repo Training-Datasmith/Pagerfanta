@@ -1,166 +1,124 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View;
 
-use Pagerfanta\PagerfantaInterface;
-use Pagerfanta\RouteGenerator\RouteGeneratorInterface;
-use Pagerfanta\View\Template\TemplateInterface;
-
-abstract class TemplateView extends View
+use Pagerfanta\Pagerfanta_Interface;
+use Pagerfanta\Route_Generator\Route_Generator_Interface;
+use Pagerfanta\View\Template\Template_Interface;
+abstract class Template_View extends View
 {
-    private readonly TemplateInterface $template;
-
-    public function __construct(?TemplateInterface $template = null)
+    private readonly Template_Interface $template;
+    public function __construct(?Template_Interface $template = null)
     {
-        $this->template = $template ?? $this->createDefaultTemplate();
+        $this->template = $template ?? $this->create_default_template();
     }
-
-    abstract protected function createDefaultTemplate(): TemplateInterface;
-
+    abstract protected function create_default_template(): Template_Interface;
     /**
      * @param PagerfantaInterface<mixed>       $pagerfanta
      * @param array<string, mixed>             $options
      * @phpstan-param callable(int $page): string|RouteGeneratorInterface $routeGenerator
      */
-    public function render(PagerfantaInterface $pagerfanta, callable $routeGenerator, array $options = []): string
+    public function render(Pagerfanta_Interface $pagerfanta, callable $route_generator, array $options = []): string
     {
-        $this->initializePagerfanta($pagerfanta);
-        $this->initializeOptions($options);
-
-        $this->configureTemplate($routeGenerator, $options);
-
+        $this->initialize_pagerfanta($pagerfanta);
+        $this->initialize_options($options);
+        $this->configure_template($route_generator, $options);
         return $this->generate();
     }
-
     /**
      * @param callable(int $page): string|RouteGeneratorInterface $routeGenerator
      * @param array<string, mixed>                                $options
      */
-    private function configureTemplate(callable|RouteGeneratorInterface $routeGenerator, array $options): void
+    private function configure_template(callable|Route_Generator_Interface $route_generator, array $options): void
     {
-        $this->template->setRouteGenerator($routeGenerator);
-        $this->template->setOptions($options);
+        $this->template->set_route_generator($route_generator);
+        $this->template->set_options($options);
     }
-
     private function generate(): string
     {
-        return $this->generateContainer($this->generatePages());
+        return $this->generate_container($this->generate_pages());
     }
-
-    private function generateContainer(string $pages): string
+    private function generate_container(string $pages): string
     {
         return str_replace('%pages%', $pages, $this->template->container());
     }
-
-    private function generatePages(): string
+    private function generate_pages(): string
     {
-        $this->calculateStartAndEndPage();
-
-        return $this->previous().
-               $this->first().
-               $this->secondIfStartIs3().
-               $this->dotsIfStartIsOver3().
-               $this->pages().
-               $this->dotsIfEndIsUnder3ToLast().
-               $this->secondToLastIfEndIs3ToLast().
-               $this->last().
-               $this->next();
+        $this->calculate_start_and_end_page();
+        return $this->previous() . $this->first() . $this->second_if_start_is3() . $this->dots_if_start_is_over3() . $this->pages() . $this->dots_if_end_is_under3to_last() . $this->second_to_last_if_end_is3to_last() . $this->last() . $this->next();
     }
-
     private function previous(): string
     {
-        if ($this->pagerfanta->hasPreviousPage()) {
-            return $this->template->previousEnabled($this->pagerfanta->getPreviousPage());
+        if ($this->pagerfanta->has_previous_page()) {
+            return $this->template->previous_enabled($this->pagerfanta->get_previous_page());
         }
-
-        return $this->template->previousDisabled();
+        return $this->template->previous_disabled();
     }
-
     private function first(): string
     {
-        if ($this->startPage > 1) {
+        if ($this->start_page > 1) {
             return $this->template->first();
         }
-
         return '';
     }
-
-    private function secondIfStartIs3(): string
+    private function second_if_start_is3(): string
     {
-        if (3 === $this->startPage) {
+        if (3 === $this->start_page) {
             return $this->template->page(2);
         }
-
         return '';
     }
-
-    private function dotsIfStartIsOver3(): string
+    private function dots_if_start_is_over3(): string
     {
-        if ($this->startPage > 3) {
+        if ($this->start_page > 3) {
             return $this->template->separator();
         }
-
         return '';
     }
-
     private function pages(): string
     {
-        \assert(null !== $this->startPage);
-        \assert(null !== $this->endPage);
-
+        \assert(null !== $this->start_page);
+        \assert(null !== $this->end_page);
         $pages = '';
-
-        foreach (range($this->startPage, $this->endPage) as $page) {
+        foreach (range($this->start_page, $this->end_page) as $page) {
             $pages .= $this->page($page);
         }
-
         return $pages;
     }
-
     private function page(int $page): string
     {
-        if ($page === $this->currentPage) {
+        if ($page === $this->current_page) {
             return $this->template->current($page);
         }
-
         return $this->template->page($page);
     }
-
-    private function dotsIfEndIsUnder3ToLast(): string
+    private function dots_if_end_is_under3to_last(): string
     {
-        if ($this->endPage < $this->toLast(3)) {
+        if ($this->end_page < $this->to_last(3)) {
             return $this->template->separator();
         }
-
         return '';
     }
-
-    private function secondToLastIfEndIs3ToLast(): string
+    private function second_to_last_if_end_is3to_last(): string
     {
-        if ($this->endPage == $this->toLast(3)) {
-            return $this->template->page($this->toLast(2));
+        if ($this->end_page == $this->to_last(3)) {
+            return $this->template->page($this->to_last(2));
         }
-
         return '';
     }
-
     private function last(): string
     {
-        if ($this->pagerfanta->getNbPages() > $this->endPage) {
-            return $this->template->last($this->pagerfanta->getNbPages());
+        if ($this->pagerfanta->get_nb_pages() > $this->end_page) {
+            return $this->template->last($this->pagerfanta->get_nb_pages());
         }
-
         return '';
     }
-
     private function next(): string
     {
-        if ($this->pagerfanta->hasNextPage()) {
-            return $this->template->nextEnabled($this->pagerfanta->getNextPage());
+        if ($this->pagerfanta->has_next_page()) {
+            return $this->template->next_enabled($this->pagerfanta->get_next_page());
         }
-
-        return $this->template->nextDisabled();
+        return $this->template->next_disabled();
     }
 }

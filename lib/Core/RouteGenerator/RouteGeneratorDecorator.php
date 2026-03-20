@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Pagerfanta\Route_Generator;
 
-namespace Pagerfanta\RouteGenerator;
-
-final class RouteGeneratorDecorator implements RouteGeneratorInterface
+final class Route_Generator_Decorator implements Route_Generator_Interface
 {
     /**
      * @var callable(int): string
      */
     private $decorated;
-
     /**
      * @param callable(int $page): string $decorated
      */
@@ -18,16 +16,13 @@ final class RouteGeneratorDecorator implements RouteGeneratorInterface
     {
         $this->decorated = $decorated;
     }
-
     public function __invoke(int $page): string
     {
         return $this->route($page);
     }
-
     public function route(int $page): string
     {
         $decorated = $this->decorated;
-
         return $decorated($page);
     }
 }

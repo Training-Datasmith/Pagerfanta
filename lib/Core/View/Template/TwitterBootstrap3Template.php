@@ -1,22 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View\Template;
 
-class TwitterBootstrap3Template extends TwitterBootstrapTemplate
+class Twitter_Bootstrap3template extends Twitter_Bootstrap_Template
 {
     /**
      * @return array<string, string>
      */
-    protected function getDefaultOptions(): array
+    protected function get_default_options(): array
     {
-        return [
-            ...parent::getDefaultOptions(),
-            ...[
-                'active_suffix' => '<span class="sr-only">(current)</span>',
-                'container_template' => '<ul class="%s">%%pages%%</ul>',
-            ],
-        ];
+        return [...parent::get_default_options(), ...['active_suffix' => '<span class="sr-only">(current)</span>', 'container_template' => '<ul class="%s">%%pages%%</ul>']];
     }
 }

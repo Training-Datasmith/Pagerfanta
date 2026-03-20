@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Doctrine\DBAL;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Query\Query_Builder;
 use Pagerfanta\Exception\InvalidArgumentException;
-
 /**
  * Extended Doctrine DBAL adapter which assists in building the count query modifier for a SELECT query on a single table.
  *
@@ -14,52 +12,44 @@ use Pagerfanta\Exception\InvalidArgumentException;
  *
  * @extends QueryAdapter<T>
  */
-class SingleTableQueryAdapter extends QueryAdapter
+class Single_Table_Query_Adapter extends Query_Adapter
 {
     /**
      * @param string $countField Primary key for the table in query, used in the count expression. Must include table alias.
      *
      * @throws InvalidArgumentException if the count field does not have a table alias
      */
-    public function __construct(QueryBuilder $queryBuilder, string $countField)
+    public function __construct(Query_Builder $query_builder, string $count_field)
     {
-        parent::__construct($queryBuilder, $this->createCountQueryModifier($countField));
+        parent::__construct($query_builder, $this->create_count_query_modifier($count_field));
     }
-
-    private function createCountQueryModifier(string $countField): \Closure
+    private function create_count_query_modifier(string $count_field): \Closure
     {
-        $select = $this->createSelectForCountField($countField);
-
-        return static function (QueryBuilder $queryBuilder) use ($select): QueryBuilder {
-            $queryBuilder->select($select);
-
+        $select = $this->create_select_for_count_field($count_field);
+        return static function (Query_Builder $query_builder) use ($select): Query_Builder {
+            $query_builder->select($select);
             // @phpstan-ignore-next-line function.alreadyNarrowedType
-            if (method_exists($queryBuilder, 'resetOrderBy')) {
-                $queryBuilder->resetOrderBy();
+            if (method_exists($query_builder, 'resetOrderBy')) {
+                $query_builder->reset_order_by();
             } else {
-                $queryBuilder->resetQueryPart('orderBy');
+                $query_builder->reset_query_part('orderBy');
             }
-
-            $queryBuilder->setMaxResults(1);
-
-            return $queryBuilder;
+            $query_builder->set_max_results(1);
+            return $query_builder;
         };
     }
-
     /**
      * @throws InvalidArgumentException if the count field does not have a table alias
      */
-    private function createSelectForCountField(string $countField): string
+    private function create_select_for_count_field(string $count_field): string
     {
-        if ($this->countFieldHasNoAlias($countField)) {
+        if ($this->count_field_has_no_alias($count_field)) {
             throw new InvalidArgumentException('The $countField must contain a table alias in the string.');
         }
-
-        return \sprintf('COUNT(DISTINCT %s) AS total_results', $countField);
+        return \sprintf('COUNT(DISTINCT %s) AS total_results', $count_field);
     }
-
-    private function countFieldHasNoAlias(string $countField): bool
+    private function count_field_has_no_alias(string $count_field): bool
     {
-        return !str_contains($countField, '.');
+        return !str_contains($count_field, '.');
     }
 }

@@ -1,127 +1,89 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View\Template;
 
-class TwitterBootstrapTemplate extends Template
+class Twitter_Bootstrap_Template extends Template
 {
     /**
      * @return array<string, string>
      */
-    protected function getDefaultOptions(): array
+    protected function get_default_options(): array
     {
-        return [
-            'prev_message' => 'Previous',
-            'next_message' => 'Next',
-            'dots_message' => '&hellip;',
-            'active_suffix' => '',
-            'css_active_class' => 'active',
-            'css_container_class' => 'pagination',
-            'css_disabled_class' => 'disabled',
-            'css_dots_class' => 'disabled',
-            'css_item_class' => '',
-            'css_prev_class' => '',
-            'css_next_class' => '',
-            'container_template' => '<div class="%s"><ul>%%pages%%</ul></div>',
-            'rel_previous' => 'prev',
-            'rel_next' => 'next',
-        ];
+        return ['prev_message' => 'Previous', 'next_message' => 'Next', 'dots_message' => '&hellip;', 'active_suffix' => '', 'css_active_class' => 'active', 'css_container_class' => 'pagination', 'css_disabled_class' => 'disabled', 'css_dots_class' => 'disabled', 'css_item_class' => '', 'css_prev_class' => '', 'css_next_class' => '', 'container_template' => '<div class="%s"><ul>%%pages%%</ul></div>', 'rel_previous' => 'prev', 'rel_next' => 'next'];
     }
-
     public function container(): string
     {
-        return \sprintf(
-            $this->option('container_template'),
-            $this->option('css_container_class')
-        );
+        return \sprintf($this->option('container_template'), $this->option('css_container_class'));
     }
-
     public function page(int $page): string
     {
-        return $this->pageWithText($page, (string) $page);
+        return $this->page_with_text($page, (string) $page);
     }
-
-    public function pageWithText(int $page, string $text, ?string $rel = null): string
+    public function page_with_text(int $page, string $text, ?string $rel = null): string
     {
-        return $this->pageWithTextAndClass($page, $text, '', $rel);
+        return $this->page_with_text_and_class($page, $text, '', $rel);
     }
-
-    private function pageWithTextAndClass(int $page, string $text, string $class, ?string $rel = null): string
+    private function page_with_text_and_class(int $page, string $text, string $class, ?string $rel = null): string
     {
-        return $this->linkLi($class, $this->generateRoute($page), $text, $rel);
+        return $this->link_li($class, $this->generate_route($page), $text, $rel);
     }
-
-    public function previousDisabled(): string
+    public function previous_disabled(): string
     {
-        return $this->spanLi($this->previousDisabledClass(), $this->option('prev_message'));
+        return $this->span_li($this->previous_disabled_class(), $this->option('prev_message'));
     }
-
-    private function previousDisabledClass(): string
+    private function previous_disabled_class(): string
     {
-        return $this->option('css_prev_class').' '.$this->option('css_disabled_class');
+        return $this->option('css_prev_class') . ' ' . $this->option('css_disabled_class');
     }
-
-    public function previousEnabled(int $page): string
+    public function previous_enabled(int $page): string
     {
-        return $this->pageWithTextAndClass($page, $this->option('prev_message'), $this->option('css_prev_class'), $this->option('rel_previous'));
+        return $this->page_with_text_and_class($page, $this->option('prev_message'), $this->option('css_prev_class'), $this->option('rel_previous'));
     }
-
-    public function nextDisabled(): string
+    public function next_disabled(): string
     {
-        return $this->spanLi($this->nextDisabledClass(), $this->option('next_message'));
+        return $this->span_li($this->next_disabled_class(), $this->option('next_message'));
     }
-
-    private function nextDisabledClass(): string
+    private function next_disabled_class(): string
     {
-        return $this->option('css_next_class').' '.$this->option('css_disabled_class');
+        return $this->option('css_next_class') . ' ' . $this->option('css_disabled_class');
     }
-
-    public function nextEnabled(int $page): string
+    public function next_enabled(int $page): string
     {
-        return $this->pageWithTextAndClass($page, $this->option('next_message'), $this->option('css_next_class'), $this->option('rel_next'));
+        return $this->page_with_text_and_class($page, $this->option('next_message'), $this->option('css_next_class'), $this->option('rel_next'));
     }
-
     public function first(): string
     {
         return $this->page(1);
     }
-
     public function last(int $page): string
     {
         return $this->page($page);
     }
-
     public function current(int $page): string
     {
-        $text = trim($page.' '.$this->option('active_suffix'));
-
-        return $this->spanLi($this->option('css_active_class'), $text);
+        $text = trim($page . ' ' . $this->option('active_suffix'));
+        return $this->span_li($this->option('css_active_class'), $text);
     }
-
     public function separator(): string
     {
-        return $this->spanLi($this->option('css_dots_class'), $this->option('dots_message'));
+        return $this->span_li($this->option('css_dots_class'), $this->option('dots_message'));
     }
-
     /**
      * @param int|string $text
      */
-    protected function linkLi(string $class, string $href, $text, ?string $rel = null): string
+    protected function link_li(string $class, string $href, $text, ?string $rel = null): string
     {
-        $liClass = \sprintf(' class="%s"', htmlspecialchars(trim($this->option('css_item_class').' '.$class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
-        $itemRel = $rel ? \sprintf(' rel="%s"', htmlspecialchars($rel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')) : '';
-
-        return \sprintf('<li%s><a href="%s"%s>%s</a></li>', $liClass, $href, $itemRel, $text);
+        $li_class = \sprintf(' class="%s"', htmlspecialchars(trim($this->option('css_item_class') . ' ' . $class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
+        $item_rel = $rel ? \sprintf(' rel="%s"', htmlspecialchars($rel, \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8')) : '';
+        return \sprintf('<li%s><a href="%s"%s>%s</a></li>', $li_class, $href, $item_rel, $text);
     }
-
     /**
      * @param int|string $text
      */
-    protected function spanLi(string $class, $text): string
+    protected function span_li(string $class, $text): string
     {
-        $liClass = \sprintf(' class="%s"', htmlspecialchars(trim($this->option('css_item_class').' '.$class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
-
-        return \sprintf('<li%s><span>%s</span></li>', $liClass, $text);
+        $li_class = \sprintf(' class="%s"', htmlspecialchars(trim($this->option('css_item_class') . ' ' . $class), \ENT_QUOTES | \ENT_SUBSTITUTE, 'UTF-8'));
+        return \sprintf('<li%s><span>%s</span></li>', $li_class, $text);
     }
 }

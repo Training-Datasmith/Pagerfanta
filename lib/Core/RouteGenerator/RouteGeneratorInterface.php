@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Pagerfanta\Route_Generator;
 
-namespace Pagerfanta\RouteGenerator;
-
-interface RouteGeneratorInterface
+interface Route_Generator_Interface
 {
     /**
      * Generates the URL for a page item in a paginator.

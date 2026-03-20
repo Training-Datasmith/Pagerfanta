@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException implements PagerfantaException
+class InvalidArgumentException extends \InvalidArgumentException implements Pagerfanta_Exception
 {
 }

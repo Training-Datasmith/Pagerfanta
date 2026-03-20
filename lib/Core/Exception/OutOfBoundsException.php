@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Exception;
 
-class OutOfBoundsException extends \OutOfBoundsException implements PagerfantaException
+class OutOfBoundsException extends \OutOfBoundsException implements Pagerfanta_Exception
 {
 }

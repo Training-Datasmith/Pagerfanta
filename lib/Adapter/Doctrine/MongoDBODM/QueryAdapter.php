@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Pagerfanta\Doctrine\Mongo_Dbodm;
 
-namespace Pagerfanta\Doctrine\MongoDBODM;
-
-use Doctrine\ODM\MongoDB\Query\Builder;
-use Pagerfanta\Adapter\AdapterInterface;
-
+use Doctrine\ODM\Mongo_Db\Query\Builder;
+use Pagerfanta\Adapter\Adapter_Interface;
 /**
  * Adapter which calculates pagination from a Doctrine MongoDB ODM QueryBuilder.
  *
@@ -14,38 +12,27 @@ use Pagerfanta\Adapter\AdapterInterface;
  *
  * @implements AdapterInterface<T>
  */
-class QueryAdapter implements AdapterInterface
+class Query_Adapter implements Adapter_Interface
 {
-    public function __construct(
-        private readonly Builder $queryBuilder,
-    ) {
+    public function __construct(private readonly Builder $query_builder)
+    {
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        $qb = clone $this->queryBuilder;
-
-        return $qb->limit(0)
-            ->skip(0)
-            ->count()
-            ->getQuery()
-            ->execute();
+        $qb = clone $this->query_builder;
+        return $qb->limit(0)->skip(0)->count()->get_query()->execute();
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
-        return $this->queryBuilder->limit($length)
-            ->skip($offset)
-            ->getQuery()
-            ->execute();
+        return $this->query_builder->limit($length)->skip($offset)->get_query()->execute();
     }
 }

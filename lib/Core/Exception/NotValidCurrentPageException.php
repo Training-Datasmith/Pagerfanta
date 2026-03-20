@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Exception;
 
-class NotValidCurrentPageException extends InvalidArgumentException
+class Not_Valid_Current_Page_Exception extends InvalidArgumentException
 {
 }

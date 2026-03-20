@@ -1,21 +1,15 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View\Template;
 
-class TwitterBootstrap5Template extends TwitterBootstrap4Template
+class Twitter_Bootstrap5template extends Twitter_Bootstrap4template
 {
     /**
      * @return array<string, string>
      */
-    protected function getDefaultOptions(): array
+    protected function get_default_options(): array
     {
-        return [
-            ...parent::getDefaultOptions(),
-            ...[
-                'active_suffix' => '<span class="visually-hidden">(current)</span>',
-            ],
-        ];
+        return [...parent::get_default_options(), ...['active_suffix' => '<span class="visually-hidden">(current)</span>']];
     }
 }

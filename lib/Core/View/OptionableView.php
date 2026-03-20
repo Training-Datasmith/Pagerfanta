@@ -1,37 +1,31 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View;
 
-use Pagerfanta\PagerfantaInterface;
-use Pagerfanta\RouteGenerator\RouteGeneratorInterface;
-
+use Pagerfanta\Pagerfanta_Interface;
+use Pagerfanta\Route_Generator\Route_Generator_Interface;
 /**
  * Decorator for a view with a default options list, enables re-use of option configurations.
  */
-class OptionableView implements ViewInterface
+class Optionable_View implements View_Interface
 {
     /**
      * @param array<string, mixed> $defaultOptions
      */
-    public function __construct(
-        private readonly ViewInterface $view,
-        private readonly array $defaultOptions,
-    ) {
+    public function __construct(private readonly View_Interface $view, private readonly array $default_options)
+    {
     }
-
     /**
      * @param array<string, mixed> $options
      *
      * @phpstan-param callable(int $page): string|RouteGeneratorInterface $routeGenerator
      */
-    public function render(PagerfantaInterface $pagerfanta, callable $routeGenerator, array $options = []): string
+    public function render(Pagerfanta_Interface $pagerfanta, callable $route_generator, array $options = []): string
     {
-        return $this->view->render($pagerfanta, $routeGenerator, [...$this->defaultOptions, ...$options]);
+        return $this->view->render($pagerfanta, $route_generator, [...$this->default_options, ...$options]);
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'optionable';
     }

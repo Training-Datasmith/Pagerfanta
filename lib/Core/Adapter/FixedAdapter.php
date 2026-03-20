@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Adapter;
 
-use Pagerfanta\Exception\NotValidResultCountException;
-
+use Pagerfanta\Exception\Not_Valid_Result_Count_Exception;
 /**
  * Adapter which returns a fixed data set.
  *
@@ -15,44 +13,38 @@ use Pagerfanta\Exception\NotValidResultCountException;
  *
  * @implements AdapterInterface<T>
  */
-class FixedAdapter implements AdapterInterface
+class Fixed_Adapter implements Adapter_Interface
 {
     /**
      * @var int<0, max>
      */
-    private readonly int $nbResults;
-
+    private readonly int $nb_results;
     /**
      * @param iterable<array-key, T> $results
      *
      * @throws NotValidResultCountException if the number of results is less than zero
      */
-    public function __construct(
-        int $nbResults,
-        private readonly iterable $results,
-    ) {
-        if ($nbResults < 0) {
-            throw new NotValidResultCountException(\sprintf('The number of results for the "%s" constructor must be at least zero.', static::class));
+    public function __construct(int $nb_results, private readonly iterable $results)
+    {
+        if ($nb_results < 0) {
+            throw new Not_Valid_Result_Count_Exception(\sprintf('The number of results for the "%s" constructor must be at least zero.', static::class));
         }
-
-        $this->nbResults = $nbResults;
+        $this->nb_results = $nb_results;
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        return $this->nbResults;
+        return $this->nb_results;
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
         return $this->results;
     }

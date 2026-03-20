@@ -1,32 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View;
 
-use Pagerfanta\View\Template\DefaultTemplate;
-use Pagerfanta\View\Template\TemplateInterface;
-
-class DefaultView extends TemplateView
+use Pagerfanta\View\Template\Default_Template;
+use Pagerfanta\View\Template\Template_Interface;
+class Default_View extends Template_View
 {
-    protected function createDefaultTemplate(): TemplateInterface
+    protected function create_default_template(): Template_Interface
     {
-        return new DefaultTemplate();
+        return new Default_Template();
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'default';
     }
 }
-
 /*
-
 CSS:
-
 .pagerfanta {
 }
-
 .pagerfanta a,
 .pagerfanta span {
     display: inline-block;
@@ -35,48 +28,37 @@ CSS:
     margin-right: .2em;
     padding: .25em .35em;
 }
-
 .pagerfanta a {
     text-decoration: none;
 }
-
 .pagerfanta a:hover {
     background: #ccf;
 }
-
 .pagerfanta .dots {
     border-width: 0;
 }
-
 .pagerfanta .current {
     background: #ccf;
     font-weight: bold;
 }
-
 .pagerfanta .disabled {
     border-color: #ccf;
     color: #ccf;
 }
-
 COLORS:
-
 .pagerfanta a,
 .pagerfanta span {
     border-color: blue;
     color: blue;
 }
-
 .pagerfanta a:hover {
     background: #ccf;
 }
-
 .pagerfanta .current {
     background: #ccf;
 }
-
 .pagerfanta .disabled {
     border-color: #ccf;
     color: #cf;
 }
-
 */

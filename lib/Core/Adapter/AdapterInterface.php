@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Adapter;
 
-use Pagerfanta\Exception\NotValidResultCountException;
-
+use Pagerfanta\Exception\Not_Valid_Result_Count_Exception;
 /**
  * @template-covariant T
  */
-interface AdapterInterface
+interface Adapter_Interface
 {
     /**
      * Returns the number of results for the list.
@@ -18,8 +16,7 @@ interface AdapterInterface
      *
      * @throws NotValidResultCountException if the number of results is less than zero
      */
-    public function getNbResults(): int;
-
+    public function get_nb_results(): int;
     /**
      * Returns a slice of the results representing the current page of items in the list.
      *
@@ -28,5 +25,5 @@ interface AdapterInterface
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable;
+    public function get_slice(int $offset, int $length): iterable;
 }

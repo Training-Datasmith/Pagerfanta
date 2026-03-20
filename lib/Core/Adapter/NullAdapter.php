@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Adapter;
 
 /**
@@ -9,24 +8,21 @@ namespace Pagerfanta\Adapter;
  *
  * @implements AdapterInterface<null>
  */
-class NullAdapter implements AdapterInterface
+class Null_Adapter implements Adapter_Interface
 {
     /**
      * @param int<0, max> $nbResults
      */
-    public function __construct(
-        private readonly int $nbResults = 0,
-    ) {
+    public function __construct(private readonly int $nb_results = 0)
+    {
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        return $this->nbResults;
+        return $this->nb_results;
     }
-
     /**
      * The following methods are derived from code of the Zend Framework
      * Code subject to the new BSD license (http://framework.zend.com/license/new-bsd).
@@ -38,48 +34,42 @@ class NullAdapter implements AdapterInterface
      *
      * @return iterable<array-key, null>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
-        if ($offset >= $this->nbResults) {
+        if ($offset >= $this->nb_results) {
             return [];
         }
-
-        return $this->createNullArray($this->calculateNullArrayLength($offset, $length));
+        return $this->create_null_array($this->calculate_null_array_length($offset, $length));
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return int<0, max>
      */
-    private function calculateNullArrayLength(int $offset, int $length): int
+    private function calculate_null_array_length(int $offset, int $length): int
     {
-        $remainCount = $this->remainCount($offset);
-
-        if ($length > $remainCount) {
-            return $remainCount;
+        $remain_count = $this->remain_count($offset);
+        if ($length > $remain_count) {
+            return $remain_count;
         }
-
         return $length;
     }
-
     /**
      * @param int<0, max> $offset
      *
      * @return int<0, max>
      */
-    private function remainCount(int $offset): int
+    private function remain_count(int $offset): int
     {
-        return max(0, $this->nbResults - $offset);
+        return max(0, $this->nb_results - $offset);
     }
-
     /**
      * @param int<0, max> $length
      *
      * @return array<int, null>
      */
-    private function createNullArray(int $length): array
+    private function create_null_array(int $length): array
     {
         return array_fill(0, $length, null);
     }

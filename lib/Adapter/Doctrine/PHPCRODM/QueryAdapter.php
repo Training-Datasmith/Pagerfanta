@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Doctrine\PHPCRODM;
 
-use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
+use Doctrine\ODM\PHPCR\Query\Builder\Query_Builder;
 use Doctrine\ODM\PHPCR\Query\Query;
-use Pagerfanta\Adapter\AdapterInterface;
-
+use Pagerfanta\Adapter\Adapter_Interface;
 /**
  * Adapter which calculates pagination from a Doctrine PHPCR ODM QueryBuilder.
  *
@@ -15,35 +13,26 @@ use Pagerfanta\Adapter\AdapterInterface;
  *
  * @implements AdapterInterface<T>
  */
-class QueryAdapter implements AdapterInterface
+class Query_Adapter implements Adapter_Interface
 {
-    public function __construct(
-        private readonly QueryBuilder $queryBuilder
-    ) {
+    public function __construct(private readonly Query_Builder $query_builder)
+    {
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        return $this->queryBuilder->getQuery()
-            ->execute(null, Query::HYDRATE_PHPCR)
-            ->getRows()
-            ->count();
+        return $this->query_builder->get_query()->execute(null, Query::HYDRATE_PHPCR)->get_rows()->count();
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
-        return $this->queryBuilder->getQuery()
-            ->setMaxResults($length)
-            ->setFirstResult($offset)
-            ->execute();
+        return $this->query_builder->get_query()->set_max_results($length)->set_first_result($offset)->execute();
     }
 }

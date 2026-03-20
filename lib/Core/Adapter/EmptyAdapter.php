@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Adapter;
 
 /**
@@ -9,14 +8,13 @@ namespace Pagerfanta\Adapter;
  *
  * @template-implements AdapterInterface<never>
  */
-class EmptyAdapter implements AdapterInterface
+class Empty_Adapter implements Adapter_Interface
 {
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
         return 0;
     }
-
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
         return [];
     }

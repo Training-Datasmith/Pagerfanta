@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\View;
 
-use Pagerfanta\View\Template\TemplateInterface;
-use Pagerfanta\View\Template\TwitterBootstrap4Template;
-
-class TwitterBootstrap4View extends TwitterBootstrapView
+use Pagerfanta\View\Template\Template_Interface;
+use Pagerfanta\View\Template\Twitter_Bootstrap4template;
+class Twitter_Bootstrap4view extends Twitter_Bootstrap_View
 {
-    protected function createDefaultTemplate(): TemplateInterface
+    protected function create_default_template(): Template_Interface
     {
-        return new TwitterBootstrap4Template();
+        return new Twitter_Bootstrap4template();
     }
-
-    public function getName(): string
+    public function get_name(): string
     {
         return 'twitter_bootstrap4';
     }

@@ -1,61 +1,51 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta;
 
-use Pagerfanta\Adapter\AdapterInterface;
+use Pagerfanta\Adapter\Adapter_Interface;
 use Pagerfanta\Exception\InvalidArgumentException;
-use Pagerfanta\Exception\LessThan1CurrentPageException;
-use Pagerfanta\Exception\LessThan1MaxPagesException;
-use Pagerfanta\Exception\LessThan1MaxPerPageException;
+use Pagerfanta\Exception\Less_Than1current_Page_Exception;
+use Pagerfanta\Exception\Less_Than1max_Pages_Exception;
+use Pagerfanta\Exception\Less_Than1max_Per_Page_Exception;
 use Pagerfanta\Exception\LogicException;
 use Pagerfanta\Exception\OutOfBoundsException;
-use Pagerfanta\Exception\OutOfRangeCurrentPageException;
-
+use Pagerfanta\Exception\Out_Of_Range_Current_Page_Exception;
 /**
  * @template T
  *
  * @implements PagerfantaInterface<T>
  */
-class Pagerfanta implements PagerfantaInterface, \JsonSerializable
+class Pagerfanta implements Pagerfanta_Interface, \JsonSerializable
 {
-    private bool $allowOutOfRangePages = false;
-    private bool $normalizeOutOfRangePages = false;
-
+    private bool $allow_out_of_range_pages = false;
+    private bool $normalize_out_of_range_pages = false;
     /**
      * @var positive-int
      */
-    private int $maxPerPage = 10;
-
+    private int $max_per_page = 10;
     /**
      * @var positive-int
      */
-    private int $currentPage = 1;
-
+    private int $current_page = 1;
     /**
      * @var int<0, max>|null
      */
-    private ?int $nbResults = null;
-
+    private ?int $nb_results = null;
     /**
      * @var positive-int|null
      */
-    private ?int $maxNbPages = null;
-
+    private ?int $max_nb_pages = null;
     /**
      * @var iterable<array-key, T>|null
      */
-    private ?iterable $currentPageResults = null;
-
+    private ?iterable $current_page_results = null;
     /**
      * @param AdapterInterface<T> $adapter
      */
-    public function __construct(
-        private readonly AdapterInterface $adapter,
-    ) {
+    public function __construct(private readonly Adapter_Interface $adapter)
+    {
     }
-
     /**
      * @param AdapterInterface<T> $adapter
      *
@@ -63,351 +53,292 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
      *
      * @return self<T>
      */
-    public static function createForCurrentPageWithMaxPerPage(AdapterInterface $adapter, int $currentPage, int $maxPerPage): self
+    public static function create_for_current_page_with_max_per_page(Adapter_Interface $adapter, int $current_page, int $max_per_page): self
     {
         $pagerfanta = new self($adapter);
-        $pagerfanta->setMaxPerPage($maxPerPage);
-        $pagerfanta->setCurrentPage($currentPage);
-
+        $pagerfanta->set_max_per_page($max_per_page);
+        $pagerfanta->set_current_page($current_page);
         return $pagerfanta;
     }
-
     /**
      * @return AdapterInterface<T>
      */
-    public function getAdapter(): AdapterInterface
+    public function get_adapter(): Adapter_Interface
     {
         return $this->adapter;
     }
-
     /**
      * @return $this
      */
-    public function setAllowOutOfRangePages(bool $allowOutOfRangePages): PagerfantaInterface
+    public function set_allow_out_of_range_pages(bool $allow_out_of_range_pages): Pagerfanta_Interface
     {
-        $this->allowOutOfRangePages = $allowOutOfRangePages;
-
+        $this->allow_out_of_range_pages = $allow_out_of_range_pages;
         return $this;
     }
-
-    public function getAllowOutOfRangePages(): bool
+    public function get_allow_out_of_range_pages(): bool
     {
-        return $this->allowOutOfRangePages;
+        return $this->allow_out_of_range_pages;
     }
-
     /**
      * @return $this
      */
-    public function setNormalizeOutOfRangePages(bool $normalizeOutOfRangePages): PagerfantaInterface
+    public function set_normalize_out_of_range_pages(bool $normalize_out_of_range_pages): Pagerfanta_Interface
     {
-        $this->normalizeOutOfRangePages = $normalizeOutOfRangePages;
-
+        $this->normalize_out_of_range_pages = $normalize_out_of_range_pages;
         return $this;
     }
-
-    public function getNormalizeOutOfRangePages(): bool
+    public function get_normalize_out_of_range_pages(): bool
     {
-        return $this->normalizeOutOfRangePages;
+        return $this->normalize_out_of_range_pages;
     }
-
     /**
      * @return $this
      *
      * @throws LessThan1MaxPerPageException if the page is less than 1
      */
-    public function setMaxPerPage(int $maxPerPage): PagerfantaInterface
+    public function set_max_per_page(int $max_per_page): Pagerfanta_Interface
     {
-        $this->filterMaxPerPage($maxPerPage);
-
-        \assert($maxPerPage > 0);
-
-        $this->maxPerPage = $maxPerPage;
-
-        $this->resetForMaxPerPageChange();
-        $this->filterOutOfRangeCurrentPage($this->currentPage);
-
+        $this->filter_max_per_page($max_per_page);
+        \assert($max_per_page > 0);
+        $this->max_per_page = $max_per_page;
+        $this->reset_for_max_per_page_change();
+        $this->filter_out_of_range_current_page($this->current_page);
         return $this;
     }
-
-    private function filterMaxPerPage(int $maxPerPage): void
+    private function filter_max_per_page(int $max_per_page): void
     {
-        $this->checkMaxPerPage($maxPerPage);
+        $this->check_max_per_page($max_per_page);
     }
-
     /**
      * @throws LessThan1MaxPerPageException if the page is less than 1
      */
-    private function checkMaxPerPage(int $maxPerPage): void
+    private function check_max_per_page(int $max_per_page): void
     {
-        if ($maxPerPage < 1) {
-            throw new LessThan1MaxPerPageException();
+        if ($max_per_page < 1) {
+            throw new Less_Than1max_Per_Page_Exception();
         }
     }
-
-    private function resetForMaxPerPageChange(): void
+    private function reset_for_max_per_page_change(): void
     {
-        $this->currentPageResults = null;
+        $this->current_page_results = null;
     }
-
     /**
      * @return positive-int
      */
-    public function getMaxPerPage(): int
+    public function get_max_per_page(): int
     {
-        return $this->maxPerPage;
+        return $this->max_per_page;
     }
-
     /**
      * @return $this
      *
      * @throws LessThan1CurrentPageException  if the current page is less than 1
      * @throws OutOfRangeCurrentPageException if It is not allowed out of range pages and they are not normalized
      */
-    public function setCurrentPage(int $currentPage): PagerfantaInterface
+    public function set_current_page(int $current_page): Pagerfanta_Interface
     {
-        $this->currentPage = $this->filterCurrentPage($currentPage);
-        $this->resetForCurrentPageChange();
-
+        $this->current_page = $this->filter_current_page($current_page);
+        $this->reset_for_current_page_change();
         return $this;
     }
-
     /**
      * @return positive-int
      */
-    private function filterCurrentPage(int $currentPage): int
+    private function filter_current_page(int $current_page): int
     {
-        $this->checkCurrentPage($currentPage);
-
-        \assert($currentPage > 0);
-
-        return $this->filterOutOfRangeCurrentPage($currentPage);
+        $this->check_current_page($current_page);
+        \assert($current_page > 0);
+        return $this->filter_out_of_range_current_page($current_page);
     }
-
     /**
      * @throws LessThan1CurrentPageException if the current page is less than 1
      */
-    private function checkCurrentPage(int $currentPage): void
+    private function check_current_page(int $current_page): void
     {
-        if ($currentPage < 1) {
-            throw new LessThan1CurrentPageException();
+        if ($current_page < 1) {
+            throw new Less_Than1current_Page_Exception();
         }
     }
-
     /**
      * @param positive-int $currentPage
      *
      * @return positive-int
      */
-    private function filterOutOfRangeCurrentPage(int $currentPage): int
+    private function filter_out_of_range_current_page(int $current_page): int
     {
-        if ($this->notAllowedCurrentPageOutOfRange($currentPage)) {
-            return $this->normalizeOutOfRangeCurrentPage($currentPage);
+        if ($this->not_allowed_current_page_out_of_range($current_page)) {
+            return $this->normalize_out_of_range_current_page($current_page);
         }
-
-        return $currentPage;
+        return $current_page;
     }
-
-    private function notAllowedCurrentPageOutOfRange(int $currentPage): bool
+    private function not_allowed_current_page_out_of_range(int $current_page): bool
     {
-        return !$this->getAllowOutOfRangePages() && $this->currentPageOutOfRange($currentPage);
+        return !$this->get_allow_out_of_range_pages() && $this->current_page_out_of_range($current_page);
     }
-
-    private function currentPageOutOfRange(int $currentPage): bool
+    private function current_page_out_of_range(int $current_page): bool
     {
-        return $currentPage > 1 && $currentPage > $this->getNbPages();
+        return $current_page > 1 && $current_page > $this->get_nb_pages();
     }
-
     /**
      * @return positive-int
      *
      * @throws OutOfRangeCurrentPageException if the page should not be normalized
      */
-    private function normalizeOutOfRangeCurrentPage(int $currentPage): int
+    private function normalize_out_of_range_current_page(int $current_page): int
     {
-        if ($this->getNormalizeOutOfRangePages()) {
-            return $this->getNbPages();
+        if ($this->get_normalize_out_of_range_pages()) {
+            return $this->get_nb_pages();
         }
-
-        throw new OutOfRangeCurrentPageException(\sprintf('Page "%d" does not exist. The currentPage must be inferior to "%d"', $currentPage, $this->getNbPages()));
+        throw new Out_Of_Range_Current_Page_Exception(\sprintf('Page "%d" does not exist. The currentPage must be inferior to "%d"', $current_page, $this->get_nb_pages()));
     }
-
-    private function resetForCurrentPageChange(): void
+    private function reset_for_current_page_change(): void
     {
-        $this->currentPageResults = null;
+        $this->current_page_results = null;
     }
-
     /**
      * @return positive-int
      */
-    public function getCurrentPage(): int
+    public function get_current_page(): int
     {
-        return $this->currentPage;
+        return $this->current_page;
     }
-
     /**
      * @return iterable<array-key, T>
      */
-    public function getCurrentPageResults(): iterable
+    public function get_current_page_results(): iterable
     {
-        return $this->currentPageResults ??= $this->getCurrentPageResultsFromAdapter();
+        return $this->current_page_results ??= $this->get_current_page_results_from_adapter();
     }
-
     /**
      * @return iterable<array-key, T>
      */
-    private function getCurrentPageResultsFromAdapter(): iterable
+    private function get_current_page_results_from_adapter(): iterable
     {
-        $offset = $this->calculateOffsetForCurrentPageResults();
-        $length = $this->getMaxPerPage();
-
-        return $this->getAdapter()->getSlice($offset, $length);
+        $offset = $this->calculate_offset_for_current_page_results();
+        $length = $this->get_max_per_page();
+        return $this->get_adapter()->get_slice($offset, $length);
     }
-
     /**
      * @return int<0, max>
      */
-    private function calculateOffsetForCurrentPageResults(): int
+    private function calculate_offset_for_current_page_results(): int
     {
-        return ($this->getCurrentPage() - 1) * $this->getMaxPerPage();
+        return ($this->get_current_page() - 1) * $this->get_max_per_page();
     }
-
     /**
      * @return int<0, max>
      */
-    public function getCurrentPageOffsetStart(): int
+    public function get_current_page_offset_start(): int
     {
-        return 0 !== $this->getNbResults() ? $this->calculateOffsetForCurrentPageResults() + 1 : 0;
+        return 0 !== $this->get_nb_results() ? $this->calculate_offset_for_current_page_results() + 1 : 0;
     }
-
     /**
      * @return int<0, max>
      */
-    public function getCurrentPageOffsetEnd(): int
+    public function get_current_page_offset_end(): int
     {
-        return $this->hasNextPage() ? $this->getCurrentPage() * $this->getMaxPerPage() : $this->getNbResults();
+        return $this->has_next_page() ? $this->get_current_page() * $this->get_max_per_page() : $this->get_nb_results();
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        return $this->nbResults ??= $this->getAdapter()->getNbResults();
+        return $this->nb_results ??= $this->get_adapter()->get_nb_results();
     }
-
     /**
      * @return positive-int
      */
-    public function getNbPages(): int
+    public function get_nb_pages(): int
     {
-        $nbPages = $this->calculateNbPages();
-
-        if (0 === $nbPages) {
-            return $this->minimumNbPages();
+        $nb_pages = $this->calculate_nb_pages();
+        if (0 === $nb_pages) {
+            return $this->minimum_nb_pages();
         }
-
-        if (null !== $this->maxNbPages && $this->maxNbPages < $nbPages) {
-            return $this->maxNbPages;
+        if (null !== $this->max_nb_pages && $this->max_nb_pages < $nb_pages) {
+            return $this->max_nb_pages;
         }
-
-        return $nbPages;
+        return $nb_pages;
     }
-
     /**
      * @return int<0, max>
      */
-    private function calculateNbPages(): int
+    private function calculate_nb_pages(): int
     {
-        return (int) ceil($this->getNbResults() / $this->getMaxPerPage());
+        return (int) ceil($this->get_nb_results() / $this->get_max_per_page());
     }
-
     /**
      * @return positive-int
      */
-    private function minimumNbPages(): int
+    private function minimum_nb_pages(): int
     {
         return 1;
     }
-
     /**
      * @return $this
      *
      * @throws LessThan1MaxPagesException if the max number of pages is less than 1
      */
-    public function setMaxNbPages(int $maxNbPages): PagerfantaInterface
+    public function set_max_nb_pages(int $max_nb_pages): Pagerfanta_Interface
     {
-        if ($maxNbPages < 1) {
-            throw new LessThan1MaxPagesException();
+        if ($max_nb_pages < 1) {
+            throw new Less_Than1max_Pages_Exception();
         }
-
-        $this->maxNbPages = $maxNbPages;
-
+        $this->max_nb_pages = $max_nb_pages;
         return $this;
     }
-
     /**
      * @return $this
      */
-    public function resetMaxNbPages(): PagerfantaInterface
+    public function reset_max_nb_pages(): Pagerfanta_Interface
     {
-        $this->maxNbPages = null;
-
+        $this->max_nb_pages = null;
         return $this;
     }
-
-    public function haveToPaginate(): bool
+    public function have_to_paginate(): bool
     {
-        return $this->getNbResults() > $this->maxPerPage;
+        return $this->get_nb_results() > $this->max_per_page;
     }
-
-    public function hasPreviousPage(): bool
+    public function has_previous_page(): bool
     {
-        return $this->currentPage > 1;
+        return $this->current_page > 1;
     }
-
     /**
      * @return positive-int
      *
      * @throws LogicException if there is no previous page
      */
-    public function getPreviousPage(): int
+    public function get_previous_page(): int
     {
-        if (!$this->hasPreviousPage()) {
+        if (!$this->has_previous_page()) {
             throw new LogicException('There is no previous page.');
         }
-
-        \assert($this->currentPage > 1);
-
-        return $this->currentPage - 1;
+        \assert($this->current_page > 1);
+        return $this->current_page - 1;
     }
-
-    public function hasNextPage(): bool
+    public function has_next_page(): bool
     {
-        return $this->currentPage < $this->getNbPages();
+        return $this->current_page < $this->get_nb_pages();
     }
-
     /**
      * @return positive-int
      *
      * @throws LogicException if there is no next page
      */
-    public function getNextPage(): int
+    public function get_next_page(): int
     {
-        if (!$this->hasNextPage()) {
+        if (!$this->has_next_page()) {
             throw new LogicException('There is no next page.');
         }
-
-        return $this->currentPage + 1;
+        return $this->current_page + 1;
     }
-
     /**
      * @return int<0, max>
      */
     public function count(): int
     {
-        return $this->getNbResults();
+        return $this->get_nb_results();
     }
-
     /**
      * @return \Traversable<array-key, T>
      *
@@ -415,37 +346,29 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
      */
     public function getIterator(): \Traversable
     {
-        $results = $this->getCurrentPageResults();
-
+        $results = $this->get_current_page_results();
         if ($results instanceof \Iterator) {
             return $results;
         }
-
         if ($results instanceof \IteratorAggregate) {
             return $results->getIterator();
         }
-
         if (\is_array($results)) {
             return new \ArrayIterator($results);
         }
-
         throw new InvalidArgumentException(\sprintf('Cannot create iterator with page results of type "%s".', get_debug_type($results)));
     }
-
     /**
      * @return T[]
      */
     public function jsonSerialize(): array
     {
-        $results = $this->getCurrentPageResults();
-
+        $results = $this->get_current_page_results();
         if ($results instanceof \Traversable) {
             return iterator_to_array($results);
         }
-
         return $results;
     }
-
     /**
      * Get page number of the item at specified position (1-based index).
      *
@@ -455,32 +378,28 @@ class Pagerfanta implements PagerfantaInterface, \JsonSerializable
      *
      * @throws OutOfBoundsException if the item is outside the result set
      */
-    public function getPageNumberForItemAtPosition(int $position): int
+    public function get_page_number_for_item_at_position(int $position): int
     {
-        if ($this->getNbResults() < $position) {
-            throw new OutOfBoundsException(\sprintf('Item requested at position %d, but there are only %d items.', $position, $this->getNbResults()));
+        if ($this->get_nb_results() < $position) {
+            throw new OutOfBoundsException(\sprintf('Item requested at position %d, but there are only %d items.', $position, $this->get_nb_results()));
         }
-
-        return (int) ceil($position / $this->getMaxPerPage());
+        return (int) ceil($position / $this->get_max_per_page());
     }
-
     /**
      * Generates an iterator to automatically iterate over all pages in a result set.
      *
      * @return \Generator<int, T, mixed, void>
      */
-    public function autoPagingIterator(): \Generator
+    public function auto_paging_iterator(): \Generator
     {
         while (true) {
-            foreach ($this->getCurrentPageResults() as $item) {
+            foreach ($this->get_current_page_results() as $item) {
                 yield $item;
             }
-
-            if (!$this->hasNextPage()) {
+            if (!$this->has_next_page()) {
                 break;
             }
-
-            $this->setCurrentPage($this->getNextPage());
+            $this->set_current_page($this->get_next_page());
         }
     }
 }

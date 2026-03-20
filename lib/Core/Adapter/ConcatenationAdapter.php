@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Pagerfanta\Adapter;
 
 use Pagerfanta\Exception\InvalidArgumentException;
-
 /**
  * Adapter that concatenates the results of other adapters.
  *
@@ -13,20 +11,18 @@ use Pagerfanta\Exception\InvalidArgumentException;
  *
  * @implements AdapterInterface<T>
  */
-class ConcatenationAdapter implements AdapterInterface
+class Concatenation_Adapter implements Adapter_Interface
 {
     /**
      * @var list<AdapterInterface<T>>
      */
     protected array $adapters;
-
     /**
      * Cache of the numbers of results of the adapters. The indexes correspond the indexes of the $adapters property.
      *
      * @var list<int<0, max>>|null
      */
-    protected ?array $adaptersNbResultsCache = null;
-
+    protected ?array $adapters_nb_results_cache = null;
     /**
      * @param list<AdapterInterface<T>> $adapters
      *
@@ -35,101 +31,82 @@ class ConcatenationAdapter implements AdapterInterface
     public function __construct(array $adapters)
     {
         foreach ($adapters as $adapter) {
-            if (!$adapter instanceof AdapterInterface) {
-                throw new InvalidArgumentException(\sprintf('The $adapters argument of the %s constructor expects all items to be an instance of %s.', self::class, AdapterInterface::class));
+            if (!$adapter instanceof Adapter_Interface) {
+                throw new InvalidArgumentException(\sprintf('The $adapters argument of the %s constructor expects all items to be an instance of %s.', self::class, Adapter_Interface::class));
             }
         }
-
         $this->adapters = $adapters;
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        if (null === $this->adaptersNbResultsCache) {
-            $this->refreshAdaptersNbResults();
+        if (null === $this->adapters_nb_results_cache) {
+            $this->refresh_adapters_nb_results();
         }
-
-        \assert(null !== $this->adaptersNbResultsCache);
-
-        return array_sum($this->adaptersNbResultsCache);
+        \assert(null !== $this->adapters_nb_results_cache);
+        return array_sum($this->adapters_nb_results_cache);
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
-        if (null === $this->adaptersNbResultsCache) {
-            $this->refreshAdaptersNbResults();
+        if (null === $this->adapters_nb_results_cache) {
+            $this->refresh_adapters_nb_results();
         }
-
-        \assert(null !== $this->adaptersNbResultsCache);
-
+        \assert(null !== $this->adapters_nb_results_cache);
         $slice = [];
-        $previousAdaptersNbResultsSum = 0;
-        $requestFirstIndex = $offset;
-        $requestLastIndex = $offset + $length - 1;
-
+        $previous_adapters_nb_results_sum = 0;
+        $request_first_index = $offset;
+        $request_last_index = $offset + $length - 1;
         foreach ($this->adapters as $index => $adapter) {
-            $adapterNbResults = $this->adaptersNbResultsCache[$index];
-            $adapterFirstIndex = $previousAdaptersNbResultsSum;
-            $adapterLastIndex = $adapterFirstIndex + $adapterNbResults - 1;
-
-            $previousAdaptersNbResultsSum += $adapterNbResults;
-
+            $adapter_nb_results = $this->adapters_nb_results_cache[$index];
+            $adapter_first_index = $previous_adapters_nb_results_sum;
+            $adapter_last_index = $adapter_first_index + $adapter_nb_results - 1;
+            $previous_adapters_nb_results_sum += $adapter_nb_results;
             // The adapter is fully below the requested slice range — skip it
-            if ($adapterLastIndex < $requestFirstIndex) {
+            if ($adapter_last_index < $request_first_index) {
                 continue;
             }
-
             // The adapter is fully above the requested slice range — finish the gathering
-            if ($adapterFirstIndex > $requestLastIndex) {
+            if ($adapter_first_index > $request_last_index) {
                 break;
             }
-
             // Else the adapter range definitely intersects with the requested range
-            $fetchOffset = $requestFirstIndex - $adapterFirstIndex;
-            $fetchLength = $length;
-
+            $fetch_offset = $request_first_index - $adapter_first_index;
+            $fetch_length = $length;
             // The requested range start is below the adapter range start
-            if ($fetchOffset < 0) {
-                $fetchLength += $fetchOffset;
-                $fetchOffset = 0;
+            if ($fetch_offset < 0) {
+                $fetch_length += $fetch_offset;
+                $fetch_offset = 0;
             }
-
             // The requested range end is above the adapter range end
-            if ($fetchOffset + $fetchLength > $adapterNbResults) {
-                $fetchLength = $adapterNbResults - $fetchOffset;
+            if ($fetch_offset + $fetch_length > $adapter_nb_results) {
+                $fetch_length = $adapter_nb_results - $fetch_offset;
             }
-
             // Getting the subslice from the adapter and adding it to the result slice
-            $fetchSlice = $adapter->getSlice($fetchOffset, $fetchLength);
-
-            foreach ($fetchSlice as $item) {
+            $fetch_slice = $adapter->get_slice($fetch_offset, $fetch_length);
+            foreach ($fetch_slice as $item) {
                 $slice[] = $item;
             }
         }
-
         return $slice;
     }
-
     /**
      * Refreshes the cache of the numbers of results of the adapters.
      */
-    protected function refreshAdaptersNbResults(): void
+    protected function refresh_adapters_nb_results(): void
     {
-        if (null === $this->adaptersNbResultsCache) {
-            $this->adaptersNbResultsCache = [];
+        if (null === $this->adapters_nb_results_cache) {
+            $this->adapters_nb_results_cache = [];
         }
-
         foreach ($this->adapters as $index => $adapter) {
-            $this->adaptersNbResultsCache[$index] = $adapter->getNbResults();
+            $this->adapters_nb_results_cache[$index] = $adapter->get_nb_results();
         }
     }
 }

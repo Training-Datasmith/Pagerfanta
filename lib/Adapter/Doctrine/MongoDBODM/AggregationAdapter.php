@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Pagerfanta\Doctrine\Mongo_Dbodm;
 
-namespace Pagerfanta\Doctrine\MongoDBODM;
-
-use Doctrine\ODM\MongoDB\Aggregation\Builder;
-use Pagerfanta\Adapter\AdapterInterface;
-
+use Doctrine\ODM\Mongo_Db\Aggregation\Builder;
+use Pagerfanta\Adapter\Adapter_Interface;
 /**
  * Adapter which calculates pagination from a Doctrine MongoDB ODM Aggregation Builder.
  *
@@ -14,42 +12,28 @@ use Pagerfanta\Adapter\AdapterInterface;
  *
  * @implements AdapterInterface<T>
  */
-class AggregationAdapter implements AdapterInterface
+class Aggregation_Adapter implements Adapter_Interface
 {
-    public function __construct(
-        private readonly Builder $aggregationBuilder,
-    ) {
+    public function __construct(private readonly Builder $aggregation_builder)
+    {
     }
-
     /**
      * @return int<0, max>
      */
-    public function getNbResults(): int
+    public function get_nb_results(): int
     {
-        $aggregationBuilder = clone $this->aggregationBuilder;
-
-        return $aggregationBuilder
-            ->hydrate(null)
-            ->count('numResults')
-            ->getAggregation()
-            ->getIterator()
-            ->toArray()[0]['numResults'] ?? 0;
+        $aggregation_builder = clone $this->aggregation_builder;
+        return $aggregation_builder->hydrate(null)->count('numResults')->get_aggregation()->getIterator()->to_array()[0]['numResults'] ?? 0;
     }
-
     /**
      * @param int<0, max> $offset
      * @param int<0, max> $length
      *
      * @return iterable<array-key, T>
      */
-    public function getSlice(int $offset, int $length): iterable
+    public function get_slice(int $offset, int $length): iterable
     {
-        $aggregationBuilder = clone $this->aggregationBuilder;
-
-        return $aggregationBuilder
-            ->skip($offset)
-            ->limit($length)
-            ->getAggregation()
-            ->getIterator();
+        $aggregation_builder = clone $this->aggregation_builder;
+        return $aggregation_builder->skip($offset)->limit($length)->get_aggregation()->getIterator();
     }
 }
