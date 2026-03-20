@@ -22,8 +22,8 @@ class Callback_Adapter implements Adapter_Interface
      */
     private $slice_callable;
     /**
-     * @param callable(): int<0, max>                                                    $nbResultsCallable
-     * @param callable(int<0, max> $offset, int<0, max> $length): iterable<array-key, T> $sliceCallable
+     * @param callable(): int<0, max>                                                    $nb_results_callable Callable that returns the total number of results (must be >= 0)
+     * @param callable(int<0, max> $offset, int<0, max> $length): iterable<array-key, T> $slice_callable     Callable that returns a slice of results given an offset and length
      */
     public function __construct(callable $nb_results_callable, callable $slice_callable)
     {
@@ -31,9 +31,13 @@ class Callback_Adapter implements Adapter_Interface
         $this->slice_callable = $slice_callable;
     }
     /**
-     * @return int<0, max>
+     * Returns the total number of results by invoking the registered count callable.
      *
-     * @throws NotValidResultCountException if the number of results is less than zero
+     * @return int<0, max> Total result count, always >= 0
+     *
+     * @throws \Pagerfanta\Exception\Not_Valid_Result_Count_Exception If the callable returns a negative number
+     *
+     * @complexity O(1) for this adapter — delegates entirely to the injected callable
      */
     public function get_nb_results(): int
     {
@@ -45,10 +49,14 @@ class Callback_Adapter implements Adapter_Interface
         return $count;
     }
     /**
-     * @param int<0, max> $offset
-     * @param int<0, max> $length
+     * Returns a slice of results by invoking the registered slice callable.
      *
-     * @return iterable<array-key, T>
+     * @param int<0, max> $offset Zero-based start position within the full result set
+     * @param int<0, max> $length Number of items to return
+     *
+     * @return iterable<array-key, T> Items for the requested page
+     *
+     * @complexity O(1) for this adapter — delegates entirely to the injected callable
      */
     public function get_slice(int $offset, int $length): iterable
     {

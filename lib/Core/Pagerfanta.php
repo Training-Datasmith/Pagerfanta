@@ -12,9 +12,21 @@ use Pagerfanta\Exception\LogicException;
 use Pagerfanta\Exception\OutOfBoundsException;
 use Pagerfanta\Exception\Out_Of_Range_Current_Page_Exception;
 /**
+ * Generic paginator that wraps any Adapter_Interface data source.
+ *
+ * Maintains the current page, page size, and caches the total count and current
+ * page's slice to avoid redundant adapter calls.  All page numbers are 1-based.
+ *
+ * Typical usage:
+ *   $pager = new Pagerfanta(new ArrayAdapter($items));
+ *   $pager->setMaxPerPage(25)->setCurrentPage($page);
+ *   foreach ($pager->getCurrentPageResults() as $item) { ... }
+ *
  * @template T
  *
  * @implements PagerfantaInterface<T>
+ *
+ * @see Adapter_Interface Implement this to support custom data sources
  */
 class Pagerfanta implements Pagerfanta_Interface, \JsonSerializable
 {
@@ -41,17 +53,25 @@ class Pagerfanta implements Pagerfanta_Interface, \JsonSerializable
      */
     private ?iterable $current_page_results = null;
     /**
-     * @param AdapterInterface<T> $adapter
+     * @param Adapter_Interface<T> $adapter Data source adapter providing count and slice access
      */
     public function __construct(private readonly Adapter_Interface $adapter)
     {
     }
+
     /**
-     * @param AdapterInterface<T> $adapter
+     * Named constructor to create a paginator already positioned at a specific page.
      *
-     * @psalm-param AdapterInterface<mixed> $adapter
+     * Equivalent to constructing, calling set_max_per_page(), then set_current_page().
+     * Useful when the page number and page size are known up-front (e.g., from a request).
      *
-     * @return self<T>
+     * @param Adapter_Interface<T> $adapter      Data source adapter
+     * @param int                  $current_page Requested page number (1-based, must be >= 1)
+     * @param int                  $max_per_page Number of items per page (must be >= 1)
+     *
+     * @return self<T> Configured Pagerfanta instance
+     *
+     * @psalm-param Adapter_Interface<mixed> $adapter
      */
     public static function create_for_current_page_with_max_per_page(Adapter_Interface $adapter, int $current_page, int $max_per_page): self
     {
