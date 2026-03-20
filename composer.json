@@ -2,7 +2,12 @@
     "name": "pagerfanta/pagerfanta",
     "type": "library",
     "description": "Pagination for PHP",
-    "keywords": ["page", "paging", "paginator", "pagination"],
+    "keywords": [
+        "page",
+        "paging",
+        "paginator",
+        "pagination"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.1",
@@ -56,7 +61,7 @@
             "Pagerfanta\\": "lib/Core/",
             "Pagerfanta\\Doctrine\\Collections\\": "lib/Adapter/Doctrine/Collections/",
             "Pagerfanta\\Doctrine\\DBAL\\": "lib/Adapter/Doctrine/DBAL/",
-            "Pagerfanta\\Doctrine\\MongoDBODM\\": "lib/Adapter/Doctrine/MongoDBODM/",
+            "Pagerfanta\\Doctrine\\Mongo_DBODM\\": "lib/Adapter/Doctrine/MongoDBODM/",
             "Pagerfanta\\Doctrine\\ORM\\": "lib/Adapter/Doctrine/ORM/",
             "Pagerfanta\\Doctrine\\PHPCRODM\\": "lib/Adapter/Doctrine/PHPCRODM/",
             "Pagerfanta\\Elastica\\": "lib/Adapter/Elastica/",
